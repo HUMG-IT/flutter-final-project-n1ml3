@@ -1,14 +1,20 @@
-name: CI
+name: CI - Test & Analysis
 
 on:
   push:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    name: Test & Analyze
 
     steps:
     - name: Checkout code
@@ -19,6 +25,7 @@ jobs:
       with:
         flutter-version: '3.24.0'
         channel: 'stable'
+        cache: true
 
     - name: Install dependencies
       run: flutter pub get
@@ -29,11 +36,28 @@ jobs:
     - name: Analyze code
       run: flutter analyze
 
-    - name: Run tests
-      run: flutter test --coverage
+    - name: Run unit tests
+      run: flutter test --coverage --reporter=json > test-results.json
 
-    - name: Upload coverage
-      uses: codecov/codecov-action@v3
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: test-results.json
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
       with:
         file: coverage/lcov.info
+        flags: unittests
+        name: codecov-umbrella
         fail_ci_if_error: false
+        verbose: true
+
+    - name: Publish coverage
+      uses: romeovs/lcov-reporter-action@v0.3.1
+      if: always()
+      with:
+        lcov-file: ./coverage/lcov.info
+        github-token: ${{ secrets.GITHUB_TOKEN }}
