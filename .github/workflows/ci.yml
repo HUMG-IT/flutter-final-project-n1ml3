@@ -37,16 +37,20 @@ jobs:
       run: flutter analyze
 
     - name: Run unit tests
-      run: flutter test --coverage --reporter=json > test-results.json
+      run: flutter test --coverage
 
-    - name: Upload test results
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-results
-        path: test-results.json
+    - name: Check if coverage file exists
+      id: coverage_check
+      run: |
+        if [ -f coverage/lcov.info ]; then
+          echo "coverage_exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "coverage_exists=false" >> $GITHUB_OUTPUT
+          echo "⚠️ Warning: coverage/lcov.info not found"
+        fi
 
     - name: Upload coverage to Codecov
+      if: steps.coverage_check.outputs.coverage_exists == 'true'
       uses: codecov/codecov-action@v4
       with:
         file: coverage/lcov.info
@@ -56,8 +60,8 @@ jobs:
         verbose: true
 
     - name: Publish coverage
+      if: steps.coverage_check.outputs.coverage_exists == 'true'
       uses: romeovs/lcov-reporter-action@v0.3.1
-      if: always()
       with:
         lcov-file: ./coverage/lcov.info
         github-token: ${{ secrets.GITHUB_TOKEN }}
