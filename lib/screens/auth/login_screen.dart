@@ -1,0 +1,220 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
+import '../../utils/validators.dart';
+import '../home/home_screen.dart';
+import 'register_screen.dart';
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _obscurePassword = true;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleLogin() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final success = await authProvider.signIn(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
+
+    if (!mounted) return;
+
+    if (success) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Đăng nhập thành công!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      if (!mounted) return;
+      
+      // Always show dialog for errors
+      final errorMessage = authProvider.error ?? 'Đăng nhập thất bại';
+      final lowerError = errorMessage.toLowerCase();
+      
+      // Check if it's a password-related error (check both Vietnamese and English)
+      final isPasswordError = lowerError.contains('mật khẩu') ||
+          lowerError.contains('password') ||
+          lowerError.contains('wrong-password') ||
+          lowerError.contains('invalid-credential') ||
+          lowerError.contains('không đúng') ||
+          lowerError.contains('wrong');
+
+      String displayMessage;
+      String title;
+      IconData icon;
+      
+      if (isPasswordError) {
+        title = 'Lỗi đăng nhập';
+        icon = Icons.lock_outline;
+        if (lowerError.contains('wrong-password') || 
+            lowerError.contains('invalid-credential') ||
+            lowerError.contains('không đúng') ||
+            lowerError.contains('wrong')) {
+          displayMessage = 'Mật khẩu không đúng. Vui lòng kiểm tra lại.';
+        } else {
+          displayMessage = errorMessage;
+        }
+      } else {
+        title = 'Lỗi đăng nhập';
+        icon = Icons.error_outline;
+        displayMessage = errorMessage;
+      }
+
+      showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (context) => AlertDialog(
+          title: Row(
+            children: [
+              Icon(icon, color: Colors.red),
+              const SizedBox(width: 8),
+              Text(title),
+            ],
+          ),
+          content: Text(displayMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Đóng'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Icon(
+                    Icons.check_circle_outline,
+                    size: 80,
+                    color: Colors.blue,
+                  ),
+                  const SizedBox(height: 32),
+                  const Text(
+                    'Đăng nhập',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 48),
+                  TextFormField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      prefixIcon: Icon(Icons.email),
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: Validators.validateEmail,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _passwordController,
+                    obscureText: _obscurePassword,
+                    decoration: InputDecoration(
+                      labelText: 'Mật khẩu',
+                      prefixIcon: const Icon(Icons.lock),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
+                      border: const OutlineInputBorder(),
+                    ),
+                    validator: Validators.validatePassword,
+                  ),
+                  const SizedBox(height: 24),
+                  Consumer<AuthProvider>(
+                    builder: (context, authProvider, _) {
+                      return ElevatedButton(
+                        onPressed:
+                            authProvider.isLoading ? null : _handleLogin,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: authProvider.isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor:
+                                      AlwaysStoppedAnimation<Color>(Colors.white),
+                                ),
+                              )
+                            : const Text(
+                                'Đăng nhập',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const RegisterScreen(),
+                        ),
+                      );
+                    },
+                    child: const Text('Chưa có tài khoản? Đăng ký'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
