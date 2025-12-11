@@ -2,7 +2,7 @@
 
 Hướng dẫn thiết lập và sử dụng GitHub Actions CI/CD cho dự án Flutter này.
 
-## 📋 Mục Lục
+## Mục Lục
 
 1. [Giới Thiệu](#giới-thiệu)
 2. [Cấu Trúc Workflows](#cấu-trúc-workflows)
@@ -12,19 +12,19 @@ Hướng dẫn thiết lập và sử dụng GitHub Actions CI/CD cho dự án F
 6. [Secrets & Variables](#secrets--variables)
 7. [Monitoring & Troubleshooting](#monitoring--troubleshooting)
 
-## 🎯 Giới Thiệu
+## Giới Thiệu
 
 Dự án này được cấu hình với GitHub Actions để tự động:
-- ✅ Chạy unit tests
-- ✅ Kiểm tra code formatting
-- ✅ Phân tích code với Flutter Analyze
-- ✅ Build APK & AAB cho Android
-- ✅ Build IPA cho iOS
-- ✅ Tạo releases tự động
-- ✅ Upload coverage reports
-- ✅ Chạy integration tests
+- Chạy unit tests
+- Kiểm tra code formatting
+- Phân tích code với Flutter Analyze
+- Build APK & AAB cho Android
+- Build IPA cho iOS
+- Tạo releases tự động
+- Upload coverage reports
+- Chạy integration tests
 
-## 📁 Cấu Trúc Workflows
+## Cấu Trúc Workflows
 
 ### 1. **ci.yml** - CI/CD Chính
 ```
@@ -81,7 +81,7 @@ Tasks:
   - Report status
 ```
 
-## 🚀 Thiết Lập Ban Đầu
+## Thiết Lập Ban Đầu
 
 ### 1. Clone hoặc đã có repository
 ```bash
@@ -115,7 +115,7 @@ git push origin main
 
 Kiểm tra: **Actions tab** trên GitHub
 
-## 🔐 Cấu Hình Keystore Android
+## Cấu Hình Keystore Android
 
 Để build APK Release tự động, bạn cần setup keystore:
 
@@ -180,7 +180,7 @@ buildTypes {
     ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
 ```
 
-## 🍎 Cấu Hình Signing iOS
+## Cấu Hình Signing iOS
 
 Để build iOS Release, bạn cần Apple Developer credentials:
 
@@ -205,7 +205,7 @@ APPLE_TEAM_ID                  = <Team ID>
 
 ### 4. Cập nhật build-ios.yml (nếu cần production build)
 
-## 📦 Secrets & Variables
+## Secrets & Variables
 
 ### Repository Secrets (Repository → Settings → Secrets)
 
@@ -234,7 +234,7 @@ env:
   JAVA_VERSION: '17'
 ```
 
-## 📊 Monitoring & Troubleshooting
+## Monitoring & Troubleshooting
 
 ### Xem Build Logs
 1. Đi tới **Actions tab**
@@ -308,7 +308,7 @@ Thêm vào commit message:
 git commit -m "Update docs [skip ci]"
 ```
 
-## 📚 Tài Liệu Tham Khảo
+## Tài Liệu Tham Khảo
 
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Flutter CI/CD Best Practices](https://flutter.dev/docs/testing/ci)
@@ -316,7 +316,7 @@ git commit -m "Update docs [skip ci]"
 - [Setup Java Action](https://github.com/actions/setup-java)
 - [Codecov Integration](https://docs.codecov.com/docs/github-actions)
 
-## ✅ Checklist Hoàn Tất
+## Checklist Hoàn Tất
 
 - [ ] Workflows được thiết lập
 - [ ] GitHub Actions được kích hoạt
@@ -327,7 +327,7 @@ git commit -m "Update docs [skip ci]"
 - [ ] Release workflow được kiểm tra
 - [ ] Status badges được thêm vào README
 
-## 💡 Tips & Tricks
+## Tips & Tricks
 
 1. **Tăng tốc độ builds**:
    - Sử dụng `cache: true` trong Flutter setup
@@ -358,4 +358,4 @@ Nếu gặp vấn đề:
 
 **Last Updated**: December 2025
 **Flutter Version**: 3.24.0
-**Status**: ✅ Production Ready
+**Status**: Production Ready

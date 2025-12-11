@@ -1,4 +1,3 @@
-
 # Bài tập lớn - Phát triển ứng dụng với Flutter
 
 ## Thông tin sinh viên
@@ -98,6 +97,38 @@ Sinh viên cần tạo tài liệu báo cáo kết quả, hướng dẫn cài đ
   Các video cần biên tập sao cho rõ ràng, dễ hiểu và không quá dài (tối đa 5 phút).
 - **Báo cáo kết quả**: Đây là nội dung báo cáo của bài tập lớn. Sinh viên cần viết báo cáo ngắn mô tả quá trình phát triển, các thư viện đã sử dụng và các kiểm thử đã thực hiện. Có thể viết trực tiếp trên file README.md này ở mục `Báo cáo kết quả`.
 - **GitHub Actions**: Thiết lập GitHub Actions để chạy kiểm thử tự động khi có thay đổi mã nguồn. Tệp cấu hình workflow cần được đặt trong thư mục `.github/workflows`, đặt tên tệp theo định dạng `ci.yml` (có trong mẫu của bài tập lớn). Github Actions cần chạy thành công và không có lỗi nếu mã nguồn không có vấn đề. Trong trường hợp có lỗi, sinh viên cần sửa lỗi và cập nhật mã nguồn để build thành công. Nếu lỗi liên quan đến `Billing & plans`, sinh viên cần thông báo cho giảng viên để được hỗ trợ hoặc bỏ qua yêu cầu này.
+
+## Hướng dẫn thiết lập CI/CD với GitHub Actions
+
+1.  **Tạo Workflow:**
+    *   Tạo thư mục `.github/workflows/`.
+    *   Tạo file `main.yml` trong thư mục đó.
+
+2.  **Định nghĩa Trigger:**
+    *   Sử dụng `on: push` cho các branch chính (`main`, `develop`).
+    *   Sử dụng `on: pull_request` cho các PR tới branch chính.
+
+3.  **Cấu hình Jobs:**
+    *   Tạo job `build` và `test`.
+    *   Sử dụng `runs-on: ubuntu-latest`.
+
+4.  **Bước Build:**
+    *   Checkout code (`actions/checkout@v3`).
+    *   Thiết lập môi trường (ví dụ: Node.js, Python, Java).
+    *   Cài đặt dependencies.
+    *   Build dự án.
+
+5.  **Bước Test:**
+    *   Checkout code.
+    *   Thiết lập môi trường.
+    *   Cài đặt dependencies.
+    *   Chạy unit tests.
+    *   Chạy integration tests (nếu có).
+
+6.  **Cấu hình Deploy (Tùy chọn):**
+    *   Thêm job `deploy`.
+    *   Sử dụng `if: github.ref == 'refs/heads/main'`.
+    *   Cấu hình các bước deploy (ví dụ: tới Vercel, AWS, Heroku).
 
 ## Tiêu chí đánh giá
 **5/10 điểm - Build thành công (GitHub Actions báo “Success”)**

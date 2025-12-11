@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class SearchBarWidget extends StatelessWidget {
+class SearchBarWidget extends StatefulWidget {
   final String hintText;
   final ValueChanged<String> onChanged;
   final TextEditingController controller;
@@ -13,20 +13,41 @@ class SearchBarWidget extends StatelessWidget {
   });
 
   @override
+  State<SearchBarWidget> createState() => _SearchBarWidgetState();
+}
+
+class _SearchBarWidgetState extends State<SearchBarWidget> {
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_onTextChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_onTextChanged);
+    super.dispose();
+  }
+
+  void _onTextChanged() {
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: TextField(
-        controller: controller,
+        controller: widget.controller,
         decoration: InputDecoration(
-          hintText: hintText,
+          hintText: widget.hintText,
           prefixIcon: const Icon(Icons.search),
-          suffixIcon: controller.text.isNotEmpty
+          suffixIcon: widget.controller.text.isNotEmpty
               ? IconButton(
                   icon: const Icon(Icons.clear),
                   onPressed: () {
-                    controller.clear();
-                    onChanged('');
+                    widget.controller.clear();
+                    widget.onChanged('');
                   },
                 )
               : null,
@@ -36,7 +57,7 @@ class SearchBarWidget extends StatelessWidget {
           filled: true,
           fillColor: Colors.grey[100],
         ),
-        onChanged: onChanged,
+        onChanged: widget.onChanged,
       ),
     );
   }
