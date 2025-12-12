@@ -30,12 +30,18 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Accept Android Licenses
+        run: |
+          yes | flutter doctor --android-licenses || true
+        
+      - name: Configure Flutter & Local Properties
+        run: |
+          flutter config --no-analytics
+          echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
+          cat android/local.properties
+
       - name: Get dependencies
         run: flutter pub get
-
-      - name: Create local.properties
-        run: |
-          echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
 
       - name: Run build_runner
         run: dart run build_runner build --delete-conflicting-outputs
@@ -45,12 +51,16 @@ jobs:
           mkdir -p ~/.android
           keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
 
-      # Build APK Release (Signed with Debug key per build.gradle config)
+      # Build APK Release
       - name: Build APK
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME }}
         run: flutter build apk --release --verbose
 
       # Build AppBundle Release
       - name: Build AppBundle
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME }}
         run: flutter build appbundle --release --verbose
 
       - name: Upload APK
