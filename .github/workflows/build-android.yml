@@ -35,11 +35,11 @@ jobs:
 
       # Build APK Release (Signed with Debug key per build.gradle config)
       - name: Build APK
-        run: flutter build apk --release
+        run: flutter build apk --release --verbose
 
       # Build AppBundle Release
       - name: Build AppBundle
-        run: flutter build appbundle --release
+        run: flutter build appbundle --release --verbose
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
