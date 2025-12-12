@@ -43,6 +43,9 @@ jobs:
       - name: Clean
         run: flutter clean
 
+      - name: Delete pubspec.lock (Force fresh resolution)
+        run: rm pubspec.lock
+
       - name: Get dependencies
         run: flutter pub get
 
@@ -57,7 +60,7 @@ jobs:
       - name: Build APK
         env:
           JAVA_HOME: ${{ env.JAVA_HOME }}
-        run: flutter build apk --release --no-tree-shake-icons
+        run: flutter build apk --release --no-tree-shake-icons --verbose
 
       # Build AppBundle Release (Disabled for debugging)
       # - name: Build AppBundle
