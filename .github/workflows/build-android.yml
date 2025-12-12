@@ -33,6 +33,14 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Run build_runner
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Setup Android Keystore
+        run: |
+          mkdir -p ~/.android
+          keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+
       # Build APK Release (Signed with Debug key per build.gradle config)
       - name: Build APK
         run: flutter build apk --release --verbose
