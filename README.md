@@ -152,3 +152,4 @@ Dựa trên các tiêu chí đánh giá của bài tập lớn, sinh viên tự 
 
 ---
 **Giấy phép**: Dự án này được thực hiện cho mục đích học tập.
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/f8ab735b-f223-41b1-8476-6463118625a2" />
